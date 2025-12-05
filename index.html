@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Madvedo Online — игровой портал</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="description" content="Madvedo Online — игровой портал" />
+    <style>
+      :root {
+        --bg: #08060b;
+        --panel: rgba(255, 255, 255, 0.03);
+        --neon: #27f3ff;
+        --accent: #ff4d95;
+        --glow: 0 0 14px rgba(39, 243, 255, 0.18),
+          0 0 40px rgba(255, 77, 149, 0.06);
+        --glass: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: radial-gradient(
+            ellipse at 10% 10%,
+            rgba(39, 243, 255, 0.04),
+            transparent 10%
+          ),
+          radial-gradient(
+            ellipse at 90% 90%,
+            rgba(255, 77, 149, 0.03),
+            transparent 12%
+          ),
+          var(--bg);
+        color: #e6eef8;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      /* animated stars */
+      .space {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 70% 80%,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          );
+        background-size: 400px 400px, 600px 600px;
+        animation: drift 30s linear infinite;
+        opacity: 0.7;
+        filter: blur(0.6px);
+      }
+      @keyframes drift {
+        from {
+          background-position: 0 0, 0 0;
+        }
+        to {
+          background-position: 800px -600px, -400px 900px;
+        }
+      }
+
+      .container {
+        width: 100%;
+        max-width: 980px;
+        z-index: 2;
+        position: relative;
+      }
+
+      .card {
+        background: var(--glass);
+        border-radius: 18px;
+        padding: 36px;
+        box-shadow: 0 10px 40px rgba(2, 6, 23, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(6px) saturate(1.05);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        font-size: 56px;
+        letter-spacing: 1px;
+        line-height: 1;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(39, 243, 255, 0.85);
+        background: linear-gradient(
+          90deg,
+          rgba(39, 243, 255, 0.9),
+          rgba(255, 77, 149, 0.9)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow: var(--glow);
+      }
+      .subtitle {
+        font-size: 18px;
+        margin-top: 8px;
+        color: rgba(230, 238, 248, 0.9);
+        opacity: 0.95;
+      }
+
+      .center-visual {
+        margin: 26px 0 34px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-plate {
+        width: 220px;
+        height: 220px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        box-shadow: 0 8px 30px rgba(7, 12, 25, 0.6),
+          0 0 30px rgba(39, 243, 255, 0.06) inset;
+        position: relative;
+        overflow: hidden;
+      }
+      .logo-plate::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          60deg,
+          rgba(39, 243, 255, 0.02),
+          rgba(255, 77, 149, 0.02)
+        );
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+      .logo {
+        font-family: "Orbitron", sans-serif;
+        font-size: 34px;
+        letter-spacing: 1px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.92);
+        text-shadow: 0 6px 40px rgba(39, 243, 255, 0.06);
+      }
+
+      footer {
+        margin-top: 8px;
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .btn {
+        appearance: none;
+        border: 0;
+        padding: 14px 20px;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        min-width: 230px;
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          opacity 0.12s ease;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .btn.primary {
+        background: linear-gradient(
+          90deg,
+          rgba(39, 243, 255, 0.12),
+          rgba(39, 243, 255, 0.06)
+        );
+        color: #cdefff;
+        border: 1px solid rgba(39, 243, 255, 0.35);
+        box-shadow: 0 6px 40px rgba(39, 243, 255, 0.06),
+          0 0 30px rgba(39, 243, 255, 0.08);
+      }
+      .btn.primary:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 14px 60px rgba(39, 243, 255, 0.08);
+      }
+
+      .btn.secondary {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 77, 149, 0.08),
+          rgba(255, 77, 149, 0.03)
+        );
+        color: #ffd9e8;
+        border: 1px solid rgba(255, 77, 149, 0.22);
+        box-shadow: 0 6px 30px rgba(255, 77, 149, 0.04);
+      }
+      .btn.secondary:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 14px 60px rgba(255, 77, 149, 0.06);
+      }
+
+      .btn:active {
+        transform: translateY(-1px) scale(0.998);
+      }
+
+      .note {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 13px;
+        color: rgba(230, 238, 248, 0.6);
+      }
+
+      /* responsive */
+      @media (max-width: 520px) {
+        h1 {
+          font-size: 34px;
+        }
+        .logo-plate {
+          width: 160px;
+          height: 160px;
+        }
+        .btn {
+          min-width: 170px;
+          padding: 12px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="space" aria-hidden="true"></div>
+    <div class="container">
+      <div class="card" role="main">
+        <header>
+          <h1>Madvedo Online</h1>
+          <div class="subtitle">игровой портал</div>
+        </header>
+
+        <div class="center-visual">
+          <div class="logo-plate" aria-hidden="true">
+            <div class="logo">MADVEDO</div>
+          </div>
+        </div>
+
+        <footer>
+          <a
+            class="btn primary"
+            href="https://game.madvedo.online"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Madvedo`s Quiz Game"
+            >Madvedo`s Quiz Game</a
+          >
+          <a
+            class="btn secondary"
+            href="#"
+            title="Lineage II HF Freaya P2 (заглушка)"
+            >Lineage II HF Freaya P2</a
+          >
+        </footer>
+
+        <div class="note">
+          Нажмите на кнопку, чтобы перейти на соответствующий раздел. Вторая
+          кнопка — заглушка.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
