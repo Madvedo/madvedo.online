@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Скачать — Клиент / Патч</title>
+    <style>
+      /* Reset */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        color: #fff;
+        background: #000;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Видео на фоне */
+      .bg-video {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        overflow: hidden;
+      }
+      .bg-video video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.9) saturate(1.05);
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        backdrop-filter: blur(2px);
+      }
+
+      .wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .card {
+        text-align: center;
+        max-width: 980px;
+        width: 100%;
+        padding: 36px;
+        border-radius: 18px;
+        background: linear-gradient(
+          180deg,
+          rgba(32, 20, 20, 0.6),
+          rgba(255, 255, 255, 0.3)
+        );
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      h1 {
+        font-size: 28px;
+        margin-bottom: 18px;
+        letter-spacing: 0.4px;
+      }
+      p.lead {
+        opacity: 0.9;
+        margin-bottom: 28px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 18px 28px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 18px;
+        text-decoration: none;
+        min-width: 260px;
+        transition: transform 0.2s ease, box-shadow 0.25s ease,
+          background 0.25s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        border: 2px solid rgba(255, 255, 255, 0.06);
+      }
+      .btn:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+      }
+      .btn:active {
+        transform: translateY(1px) scale(0.98);
+      }
+
+      .btn-primary {
+        background: linear-gradient(180deg, #ffffff 0%, #f2f2f2 100%);
+        color: #111;
+        border-color: rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(6px);
+      }
+
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        font-weight: 700;
+        padding: 12px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+        transform: translateY(-2px);
+      }
+
+      .hint a {
+        font-size: 13px;
+        color: #fff;
+        opacity: 0.85;
+        text-decoration: none;
+      }
+
+      .hint a:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 40;
+      }
+      .modal {
+        background: #0f0f10;
+        color: #fff;
+        max-width: 760px;
+        width: 100%;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        position: relative;
+      }
+      .modal h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+      .modal .content {
+        max-height: 60vh;
+        overflow: auto;
+        line-height: 1.5;
+        opacity: 0.95;
+      }
+      .modal .close {
+        position: absolute;
+        right: 18px;
+        top: 14px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 640px) {
+        h1 {
+          font-size: 20px;
+        }
+        .btn {
+          padding: 14px 18px;
+          font-size: 16px;
+          min-width: 200px;
+        }
+        .card {
+          padding: 20px;
+          border-radius: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-video" aria-hidden="true">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="video/1.webm" type="video/webm" />
+        Ваш браузер не поддерживает воспроизведение видео.
+      </video>
+    </div>
+    <div class="overlay" aria-hidden="true"></div>
+
+    <main class="wrap" role="main">
+      <section class="card" aria-labelledby="page-title">
+        <h1 id="page-title">Скачать игру</h1>
+        <p class="lead">Ниже доступны ссылки на скачивание клиента и патча.</p>
+
+        <div class="actions" role="group" aria-label="Скачать">
+          <a class="btn btn-primary" id="download-client" href="#" download>
+            <span>⬇</span>
+            <span>Скачать клиент</span>
+          </a>
+
+          <a class="btn btn-secondary" id="download-patch" href="#" download>
+            <span>⬇</span>
+            <span>Скачать патч</span>
+          </a>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <button class="btn-ghost" id="open-instructions">
+            Инструкция по установке
+          </button>
+
+          <!-- заменено на ссылку -->
+          <div class="hint">
+            <a href="https://madvedo.ru" target="_blank">Madvedo ©</a>
+          </div>
+        </div>
+
+        <button
+          id="mute-btn"
+          style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+          "
+        >
+          🔊
+        </button>
+      </section>
+    </main>
+
+    <div
+      class="modal-backdrop"
+      id="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal" role="document">
+        <button class="close" id="close-modal" aria-label="Закрыть">✕</button>
+        <h2 id="modal-title">Инструкция по установке</h2>
+
+        <div class="content">
+          <p>
+            <strong>1. Скачайте архив с клиентом игры</strong> — кнопка «Скачать
+            клиент» ведёт на Яндекс.Диск.
+          </p>
+
+          <p><strong>2. Распакуйте скачанный архив.</strong></p>
+
+          <p>
+            <strong
+              >3. После распаковки появятся 7 частей одного большого
+              архива.</strong
+            ><br />
+            Это обычный разделённый архив. Можно открыть <u>любую</u> часть —
+            система сама объединит остальные.
+          </p>
+
+          <p>
+            <strong>4. Скачайте патч.</strong><br />
+            Внутри <code>patch.rar</code> находится файл <code>l2.ini</code> —
+            поместите его в папку клиента → <strong>system</strong> → с заменой.
+          </p>
+
+          <p>
+            <strong>5. Запустите игру</strong> — файл
+            <code>l2.exe</code> находится в папке <strong>system</strong>.
+          </p>
+
+          <p>
+            <strong>6. Авторизация</strong><br />
+            На экране логина придумайте любые данные — регистрация происходит
+            автоматически.
+          </p>
+
+          <hr style="margin: 14px 0; opacity: 0.35" />
+
+          <p>
+            <em
+              >Если появятся проблемы — проверьте распаковку или правильность
+              установки патча.</em
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const openBtn = document.getElementById("open-instructions");
+      const modal = document.getElementById("modal");
+      const closeBtn = document.getElementById("close-modal");
+
+      function showModal() {
+        modal.style.display = "flex";
+        modal.setAttribute("aria-hidden", "false");
+        closeBtn.focus();
+        document.body.style.overflow = "hidden";
+      }
+      function hideModal() {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+        openBtn.focus();
+        document.body.style.overflow = "";
+      }
+
+      openBtn.addEventListener("click", showModal);
+      closeBtn.addEventListener("click", hideModal);
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) hideModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.style.display === "flex") hideModal();
+      });
+
+      document.getElementById("download-client").href =
+        "https://disk.yandex.ru/d/B7dWkbounqxRtA";
+      document.getElementById("download-patch").href = "patch.rar";
+    </script>
+
+    <audio id="bgm" autoplay loop></audio>
+    <script>
+      const tracks = [
+        "Aden.mp3",
+        "Dion.mp3",
+        "Giran.mp3",
+        "Gludio.mp3",
+        "Goddart-Schuttgard.mp3",
+        "Heine.mp3",
+        "INTRO.mp3",
+        "Oren.mp3",
+        "Rune.mp3",
+      ];
+      const bgm = document.getElementById("bgm");
+      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+      bgm.src = "music/" + randomTrack;
+      bgm.volume = 0.5;
+
+      const muteBtn = document.getElementById("mute-btn");
+      muteBtn.addEventListener("click", () => {
+        bgm.muted = !bgm.muted;
+        muteBtn.textContent = bgm.muted ? "🔈" : "🔊";
+      });
+    </script>
+  </body>
+</html>
