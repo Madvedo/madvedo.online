@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Скачать — Клиент / Патч</title>
+
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+
     <style>
       /* Reset */
       * {
@@ -150,6 +152,11 @@
           transform 0.18s ease,
           box-shadow 0.2s ease,
           background 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
       }
       .btn-ghost:hover {
         background: rgba(255, 255, 255, 0.18);
@@ -163,12 +170,34 @@
         opacity: 0.85;
         text-decoration: none;
       }
-
       .hint a:hover {
         opacity: 1;
         text-decoration: underline;
       }
 
+      .links {
+        margin-top: 14px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .links a {
+        font-size: 13px;
+        color: #fff;
+        opacity: 0.9;
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+      .links a:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.26);
+      }
+
+      /* Modals */
       .modal-backdrop {
         position: fixed;
         inset: 0;
@@ -179,10 +208,13 @@
         padding: 20px;
         z-index: 40;
       }
+      .modal-backdrop.is-open {
+        display: flex;
+      }
       .modal {
         background: #0f0f10;
         color: #fff;
-        max-width: 760px;
+        max-width: 860px;
         width: 100%;
         border-radius: 12px;
         padding: 22px;
@@ -193,12 +225,14 @@
       .modal h2 {
         font-size: 20px;
         margin-bottom: 12px;
+        padding-right: 38px;
       }
       .modal .content {
-        max-height: 60vh;
+        max-height: 64vh;
         overflow: auto;
-        line-height: 1.5;
+        line-height: 1.55;
         opacity: 0.95;
+        text-align: left;
       }
       .modal .close {
         position: absolute;
@@ -209,6 +243,84 @@
         color: #fff;
         font-size: 18px;
         cursor: pointer;
+      }
+
+      .content h3 {
+        font-size: 16px;
+        margin: 14px 0 8px;
+        opacity: 0.95;
+      }
+      .content p,
+      .content li {
+        font-size: 14px;
+      }
+      .content ul,
+      .content ol {
+        margin-left: 18px;
+        margin-bottom: 10px;
+      }
+      .content code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 13px;
+      }
+      .content pre {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 12px;
+        overflow: auto;
+        margin: 10px 0 14px;
+      }
+      .content pre code {
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        font-size: 13px;
+        display: block;
+        white-space: pre;
+      }
+      .content hr {
+        margin: 14px 0;
+        opacity: 0.35;
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .content a {
+        color: #fff;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .content a:hover {
+        opacity: 0.95;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        font-size: 13px;
+        margin: 6px 0 10px;
+      }
+
+      .callout {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 12px;
+        padding: 12px;
+        margin: 10px 0 14px;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 6px;
       }
 
       @media (max-width: 640px) {
@@ -240,7 +352,9 @@
     <main class="wrap" role="main">
       <section class="card" aria-labelledby="page-title">
         <h1 id="page-title">Скачать игру</h1>
-        <p class="lead">Ниже доступны ссылки на скачивание клиента и патча.</p>
+        <p class="lead">
+          Ниже доступны ссылки на скачивание клиента, патча и сборки.
+        </p>
 
         <div class="actions" role="group" aria-label="Скачать">
           <a class="btn btn-primary" id="download-client" href="#" download>
@@ -259,26 +373,60 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
           "
         >
-          <button class="btn-ghost" id="open-instructions">
-            Инструкция по установке
+          <button class="btn-ghost" id="open-instructions" type="button">
+            📌 Инструкция по установке клиента
           </button>
 
-          <!-- НОВЫЙ ЭЛЕМЕНТ: прозрачное окно + кнопка скачать сборку -->
-          <a
-            class="btn-ghost"
-            id="download-build"
-            href="/madvedo.online_l2_Interlude_automatic.rar"
-            download
+          <!-- РЯДОМ: "Скачать сборку" + модалка с полной инструкцией -->
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              justify-content: center;
+              align-items: center;
+            "
           >
-            Скачать сборку madvedo.online
-          </a>
+            <a
+              class="btn-ghost"
+              id="download-build"
+              href="/madvedo.online_l2_Interlude_automatic.rar"
+              download
+            >
+              ⬇ Скачать сборку madvedo.online
+            </a>
 
-          <!-- заменено на ссылку -->
-          <div class="hint">
-            <a href="https://madvedo.ru" target="_blank">Madvedo ©</a>
+            <button class="btn-ghost" id="open-build-guide" type="button">
+              ⚙ Инструкция к сборке (сервер)
+            </button>
+          </div>
+
+          <!-- Контакты / ресурсы -->
+          <div class="links" aria-label="Контакты и ресурсы">
+            <a href="https://madvedo.online" target="_blank" rel="noopener"
+              >Игровой Портал</a
+            >
+            <a
+              href="https://www.donationalerts.com/r/madvedo"
+              target="_blank"
+              rel="noopener"
+              >Поддержать проект</a
+            >
+            <a
+              href="https://discord.gg/mYcsUa6TPn"
+              target="_blank"
+              rel="noopener"
+              >Discord</a
+            >
+          </div>
+
+          <div class="hint" style="margin-top: 4px">
+            <a href="https://madvedo.ru" target="_blank" rel="noopener"
+              >Madvedo ©</a
+            >
           </div>
         </div>
 
@@ -297,102 +445,347 @@
             cursor: pointer;
             backdrop-filter: blur(6px);
           "
+          aria-label="Включить или выключить звук"
         >
           🔊
         </button>
       </section>
     </main>
 
+    <!-- Модалка 1: инструкция по установке клиента/патча -->
     <div
       class="modal-backdrop"
-      id="modal"
+      id="modal-instructions"
       role="dialog"
       aria-modal="true"
       aria-hidden="true"
-      aria-labelledby="modal-title"
+      aria-labelledby="modal-instructions-title"
     >
       <div class="modal" role="document">
-        <button class="close" id="close-modal" aria-label="Закрыть">✕</button>
-        <h2 id="modal-title">Инструкция по установке</h2>
+        <button
+          class="close"
+          data-close-modal="modal-instructions"
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
+        <h2 id="modal-instructions-title">Инструкция по установке клиента</h2>
 
         <div class="content">
           <p>
-            <strong>1. Скачайте архив с клиентом игры</strong> — кнопка «Скачать
-            клиент» ведёт на Яндекс.Диск. (Качаем Interlude)
+            <strong>1) Скачайте клиент</strong> — кнопка «Скачать клиент» ведёт
+            на Яндекс.Диск (Interlude).
           </p>
 
           <p>
-            <strong>2. Распакуйте скачанный архив (пароль - madvedo).</strong>
+            <strong>2) Распакуйте архив</strong> (пароль: <code>madvedo</code>).
           </p>
 
           <p>
             <strong
-              >3. После распаковки появятся 3 части одного большого
+              >3) После распаковки появятся 3 части одного большого
               архива.</strong
             ><br />
-            Это обычный разделённый архив. Можно открыть <u>любую</u> часть —
-            система сама объединит остальные.
+            Это обычный разделённый архив — открывайте <u>любую</u> часть, всё
+            соберётся автоматически.
           </p>
 
           <p>
-            <strong>4. Скачайте патч.</strong><br />
-            Внутри <code>patch.rar</code> находится файл <code>l2.ini</code> —
-            поместите его в папку клиента → <strong>system</strong> → с заменой.
+            <strong>4) Скачайте патч</strong> и распакуйте.<br />
+            Внутри <code>patch.rar</code> файл <code>l2.ini</code> — положите
+            его в папку клиента → <strong>system</strong> → с заменой.
           </p>
 
           <p>
-            <strong>5. Запустите игру</strong> — файл
+            <strong>5) Запустите игру</strong> — файл
             <code>l2.exe</code> находится в папке <strong>system</strong>.
           </p>
 
           <p>
-            <strong>6. Авторизация</strong><br />
-            На экране логина придумайте любые данные — регистрация происходит
-            автоматически.
+            <strong>6) Авторизация</strong><br />
+            На экране логина вводите любые данные — регистрация автоматическая.
           </p>
 
-          <hr style="margin: 14px 0; opacity: 0.35" />
+          <hr />
 
           <p>
             <em
-              >Если появятся проблемы — проверьте распаковку или правильность
-              установки патча.</em
+              >Если есть проблемы — проверьте распаковку и что
+              <code>l2.ini</code> действительно заменён в папке
+              <strong>system</strong>.</em
             >
+          </p>
+
+          <p style="margin-top: 10px">
+            Ресурсы:
+            <a href="https://madvedo.online" target="_blank" rel="noopener"
+              >Игровой портал</a
+            >,
+
+            <a
+              href="https://www.donationalerts.com/r/madvedo"
+              target="_blank"
+              rel="noopener"
+              >Поддержать проект</a
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модалка 2: полная инструкция к сборке (автоматика сервера) -->
+    <div
+      class="modal-backdrop"
+      id="modal-build-guide"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="modal-build-guide-title"
+    >
+      <div class="modal" role="document">
+        <button
+          class="close"
+          data-close-modal="modal-build-guide"
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
+        <h2 id="modal-build-guide-title">Инструкция к сборке madvedo.online</h2>
+
+        <div class="content">
+          <div class="callout" role="note">
+            <strong>Важно</strong>
+            <p>
+              На создание этой сборки ушло много времени — поиск и
+              восстановление исходников, поднятие и настройка сервера, разбор
+              механик, тестирование, автоматизация и подготовка инструкции.
+            </p>
+            <p style="margin-top: 8px">
+              Я не прошу покупать доступы или регистрироваться на платных
+              платформах, но если хочешь поддержать работу — вот
+              <a
+                href="https://www.donationalerts.com/r/madvedo"
+                target="_blank"
+                rel="noopener"
+                >DonationAlerts</a
+              >.
+            </p>
+          </div>
+
+          <div class="pill">
+            Полная инструкция по запуску сервера (автоматика)
+          </div>
+
+          <p>
+            Архив сборки (скачивание):
+            <a href="/madvedo.online_l2_Interlude_automatic.rar" download
+              >madvedo.online_l2_Interlude_automatic.rar</a
+            >
+            <br />
+            Пароль к архиву: <code>madvedo.online</code>
+          </p>
+
+          <h3>1) Устанавливаем VirtualBox</h3>
+          <p>
+            Скачайте VirtualBox с официального сайта:
+            <a
+              href="https://www.virtualbox.org/wiki/Downloads"
+              target="_blank"
+              rel="noopener"
+              >virtualbox.org</a
+            >
+          </p>
+
+          <h3>2) Скачиваем Ubuntu Server</h3>
+          <p>
+            Рекомендуется Ubuntu Server 24.04 LTS:
+            <a
+              href="https://ubuntu.com/download/server"
+              target="_blank"
+              rel="noopener"
+              >ubuntu.com</a
+            >
+          </p>
+
+          <h3>3) Создаём и настраиваем виртуальную машину</h3>
+          <ul>
+            <li><strong>CPU:</strong> 4</li>
+            <li><strong>RAM:</strong> 8 GB</li>
+            <li><strong>Disk:</strong> ~35 GB</li>
+          </ul>
+
+          <p><strong>Сеть:</strong> два интерфейса.</p>
+          <ul>
+            <li>
+              <strong>Интерфейс 1 — NAT</strong> + проброс портов:
+              <ul>
+                <li><code>2106 → 2106</code></li>
+                <li><code>7777 → 7777</code></li>
+                <li><code>2222 → 22</code> (SSH)</li>
+              </ul>
+              IP гостя: <code>10.0.2.15</code>
+            </li>
+            <li>
+              <strong>Интерфейс 2 — Виртуальный адаптер хоста</strong> (по
+              умолчанию)
+            </li>
+          </ul>
+
+          <p>
+            Если у вас <strong>белый IP</strong> и хотите играть через интернет
+            — пробросьте эти же порты на роутере.
+          </p>
+
+          <h3>4) Установка Ubuntu</h3>
+          <ul>
+            <li>В процессе установки почти везде жмём <strong>Done</strong></li>
+            <li>На шаге OpenSSH — <strong>ставим галочку</strong></li>
+            <li>Логин/пароль любые</li>
+            <li>При ошибке CD-ROM — перезапускаем ВМ</li>
+          </ul>
+
+          <h3>5) Подготавливаем структуру сервера</h3>
+          <p>
+            В домашнюю директорию пользователя загрузите файл
+            <code>setup_server_structure.sh</code>, затем выполните:
+          </p>
+
+          <pre><code>sudo chmod +x /home/user/setup_server_structure.sh
+/home/user/setup_server_structure.sh</code></pre>
+
+          <h3>6) Загружаем файлы</h3>
+          <p>
+            <code>01-init.sql</code> → <code>/srv/l2server/db-init/</code><br />
+            Всё остальное → <code>/srv/l2server/</code>
+          </p>
+
+          <h3>7) Запускаем полную автоматическую установку</h3>
+          <pre><code>sudo chmod +x /srv/l2server/full_setup_ubuntu.sh
+sudo /srv/l2server/full_setup_ubuntu.sh --fresh --db-root-pass rootpass</code></pre>
+
+          <h3>8) Настраиваем клиент</h3>
+          <p>
+            Откройте <code>system/l2.ini</code> (L2 File Edit) и в поле
+            <strong>Server Address</strong> укажите:
+          </p>
+          <ul>
+            <li>белый IP (для игры через интернет)</li>
+            <li>или локальный IP (если игра в одной сети)</li>
+          </ul>
+          <p>IP можно увидеть в логах выполнения скрипта.</p>
+
+          <h3>9) Запуск игры</h3>
+          <p>
+            Запускаем <code>l2.exe</code> из папки <code>system</code>.<br />
+            Логин/пароль — любые (авторегистрация).
+          </p>
+
+          <hr />
+
+          <h3>Память контейнеров Docker</h3>
+          <p>
+            Память можно поправить в <code>docker-compose.yml</code> параметром
+            <code>mem_limit</code>, затем перезапустить compose:
+          </p>
+          <pre><code>cd /srv/l2server
+docker compose down
+docker compose up -d
+docker ps</code></pre>
+
+          <p>
+            Не ставьте <code>mem_limit</code> больше, чем реально доступно
+            памяти на ВМ — будет нестабильность или OOM.
+          </p>
+
+          <h3>Проверка IP/хостов</h3>
+          <pre><code>cat /srv/l2server/gameserver/config/server.properties | grep -E "^(ExternalHostname|LoginHost|DatabaseHost)"</code></pre>
+
+          <p style="margin-top: 10px">
+            Контакты:
+            <a
+              href="https://discord.gg/mYcsUa6TPn"
+              target="_blank"
+              rel="noopener"
+              >Discord</a
+            >,
+            <a
+              href="https://www.donationalerts.com/r/madvedo"
+              target="_blank"
+              rel="noopener"
+              >Поддержать проект</a
+            >,
+            <a href="https://t.me/Art_Rbv" target="_blank" rel="noopener"
+              >Telegram</a
+            >.
           </p>
         </div>
       </div>
     </div>
 
     <script>
-      const openBtn = document.getElementById("open-instructions");
-      const modal = document.getElementById("modal");
-      const closeBtn = document.getElementById("close-modal");
-
-      function showModal() {
-        modal.style.display = "flex";
-        modal.setAttribute("aria-hidden", "false");
-        closeBtn.focus();
-        document.body.style.overflow = "hidden";
-      }
-      function hideModal() {
-        modal.style.display = "none";
-        modal.setAttribute("aria-hidden", "true");
-        openBtn.focus();
-        document.body.style.overflow = "";
-      }
-
-      openBtn.addEventListener("click", showModal);
-      closeBtn.addEventListener("click", hideModal);
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) hideModal();
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.style.display === "flex") hideModal();
-      });
-
+      // Ссылки на скачивание
       document.getElementById("download-client").href =
         "https://disk.yandex.ru/d/B7dWkbounqxRtA";
       document.getElementById("download-patch").href = "patch.rar";
+
+      // Modal helper
+      function openModal(modalId, focusEl) {
+        const m = document.getElementById(modalId);
+        m.classList.add("is-open");
+        m.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        const closeBtn = m.querySelector(".close");
+        if (closeBtn) closeBtn.focus();
+
+        m._opener = focusEl || null;
+      }
+
+      function closeModal(modalId) {
+        const m = document.getElementById(modalId);
+        m.classList.remove("is-open");
+        m.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+
+        if (m._opener && typeof m._opener.focus === "function") {
+          m._opener.focus();
+        }
+      }
+
+      // Open buttons
+      const openInstructionsBtn = document.getElementById("open-instructions");
+      const openBuildGuideBtn = document.getElementById("open-build-guide");
+
+      openInstructionsBtn.addEventListener("click", () =>
+        openModal("modal-instructions", openInstructionsBtn),
+      );
+      openBuildGuideBtn.addEventListener("click", () =>
+        openModal("modal-build-guide", openBuildGuideBtn),
+      );
+
+      // Close buttons (data-close-modal)
+      document.querySelectorAll("[data-close-modal]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const id = e.currentTarget.getAttribute("data-close-modal");
+          closeModal(id);
+        });
+      });
+
+      // Click on backdrop closes
+      document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+        backdrop.addEventListener("click", (e) => {
+          if (e.target === backdrop) {
+            closeModal(backdrop.id);
+          }
+        });
+      });
+
+      // ESC closes any open modal
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        const opened = document.querySelector(".modal-backdrop.is-open");
+        if (opened) closeModal(opened.id);
+      });
     </script>
 
     <audio id="bgm" autoplay loop></audio>
